@@ -16,7 +16,7 @@
       <li>a) A device used for secret communication</li>
       <li>b) A tool used by dentists</li>
       <li>c) A tool used by dentists</li>
-      <li>d) A tool used by dentists</li>
+      <li>d) A tool used by dentist</li>
     </ul>
   </div>
 
