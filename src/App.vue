@@ -100,23 +100,23 @@ export default {
     
     const rows = 
       [
-        [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q' ],
-        [ 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x' ],
-        [ 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x' ],
-        [ 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'h', 'x' ],
-        [ 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'o', 'x' ],
-        [ 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'u', 'x' ],
-        [ 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 's', 'x' ],
-        [ 'x', 'x', 'x', 'h', 'e', 'l', 'l', 'o', 'w', 'o', 'r', 'l', 'd', 'x', 'x', 'e', 'x' ],
-        [ 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x' ],
-        [ 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x' ],
-        [ 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x' ],
-        [ 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x' ],
-        [ 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x' ],
-        [ 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x' ],
-        [ 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x' ],
-        [ 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x' ],
-        [ 'x', 'x', 'x', 'e', 'n', 'i', 'g', 'm', 'a', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x' ], 
+        [ 'c', 'a', 'r', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q' ],
+        [ 'n', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'x', 'h', 'x', 'x', 'x', 'b', 'x', 't' ],
+        [ 'm', 'p', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'g', 'x', 'x', 'w', 'a', 'x', 'y' ],
+        [ 'e', 'j', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 's', 'x', 'h', 'i', 's', 'h', 'm' ],
+        [ 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'a', 'x', 'g', 't', 'x', 'o', 'u' ],
+        [ 'p', 'i', 'x', 'x', 'x', 'x', 'x', 'y', 'x', 'x', 'l', 'x', 'q', 'n', 'd', 'u', 's' ],
+        [ 'e', 'l', 'x', 'x', 'x', 'x', 'x', 'k', 'x', 'x', 'k', 'x', 'a', 'e', 'u', 's', 'b' ],
+        [ 'r', 'p', 'x', 'h', 'e', 'l', 'l', 'o', 'w', 'o', 'r', 'l', 'd', 's', 'w', 'e', 'c' ],
+        [ 'i', 'z', 'x', 'x', 'x', 'x', 'x', 's', 'x', 'x', 's', 'x', 'k', 's', 'x', 'x', 'r' ],
+        [ 'e', 's', 'x', 'x', 'c', 's', 'x', 'd', 'x', 'x', 'o', 'x', 'j', 'x', 'y', 'x', 'y' ],
+        [ 'n', 's', 'x', 'x', 'j', 'd', 'x', 'k', 'x', 'x', 'l', 'x', 'y', 'x', 'r', 'b', 'j' ],
+        [ 'c', 'h', 'x', 'x', 'j', 'y', 'x', 'm', 'x', 'x', 'p', 'x', 'w', 'x', 'e', 'j', 'g' ],
+        [ 'e', 'g', 'x', 'x', 'd', 'k', 'x', 'r', 'x', 'x', 'e', 'x', 's', 'x', 'r', 'w', 'b' ],
+        [ 'd', 'o', 'x', 'x', 'w', 'w', 'x', 'j', 'x', 'x', 'h', 'x', 't', 'x', 'd', 'h', 'j' ],
+        [ 'f', 'p', 'x', 'x', 'j', 'a', 'x', 'n', 'x', 'x', 'j', 'x', 's', 'x', 'i', 'n', 's' ],
+        [ 'k', 'a', 'x', 'x', 'u', 'x', 'x', 'z', 'x', 'x', 's', 'x', 'x', 'x', 'k', 'j', 'e' ],
+        [ 'l', 'v', 'x', 'e', 'n', 'i', 'g', 'm', 'a', 'x', 'l', 'x', 'a', 'f', 'f', 'd', 'y' ], 
       ];
       let is_found = 
       [
@@ -139,7 +139,7 @@ export default {
         [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
       ];
     
-    const valid_words = ['helloworld', 'hello', 'world', 'enigma', 'house'];
+    const valid_words = ['helloworld', 'hello', 'world', 'enigma', 'house', 'experience', 'car', 'witness'];
     
     let x1 = -1;
     let y1 = -1;
@@ -173,7 +173,6 @@ export default {
         this.y2 = col;
         this.click_state = 1;
         if (checkWinner(this.rows, this.x1, this.y1, this.x2, this.y2, this.valid_words)) {
-       
           this.letter_key += 1;
           if (this.x1 == this.x2) {
             if (this.y1 > this.y2) {
@@ -224,7 +223,7 @@ body {
 }
 
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Courier';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
