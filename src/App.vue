@@ -2,69 +2,100 @@
 
 <template>
 
-  <div id="app">
-    <div id = "game-board">
-      <h1>Crossword Puzzle</h1>  
-      <ul v-for="(row, row_index) in rows">
-        <li v-on:click="handleClick(row_index, col_index)" v-for="(letter, col_index) in row">
-          <letter v-bind:char=letter.letter v-bind:found=letter.is_found :key="letter_key"></letter>
-        </li>
-      </ul>      
-    </div>
-    <div id="words">
-      <h1 id="list-header">Word List</h1>
-      <word-list  v-bind:word_list="valid_words"/>
-    </div>
-  </div>
-  
+  <game v-bind:valid_words="valid_words" v-bind:rows="rows" />
+
 </template>
 
 
 <script>
 
 import Vue from 'vue'
-import Letter from './Letter.vue';
-import WordList from './WordList.vue';
+import Game from './Game.vue';
 import { walkWord } from './walkBoard.js';
 import {isValidWord, deleteWordFromList } from './manageWordList.js';
 
-Vue.component('letter', Letter);
-Vue.component('word-list', WordList);
+Vue.component('game', Game);
 
+let tryPosition = function(matrix, word, row, col) {
+
+}
+
+let placeWord = function(matrix, word, row, col) {
+
+}
+
+// randomly choose coordinates for leftmost character, choose an orientation, test if the word fits without overlapping other words, if yes insert
+// todo: integrate vueX, get word list as user input, restart game when all words are found, figure out last sentence:
+
+/* Au lancement, le jeu ne doit pas être visible et les mots à trouver ne sont pas encore connus. 
+Son apparition est déclenchée par une action qui entre les données (les mots à trouver). 
+Lorsqu'un mot est trouvé, une action spécifique peut être lancée qui met le jeu en pause. 
+Lorsque tous les mots sont trouvés, une action spécifique peut être lancée, avant de faire disparaître le jeu. 
+On peut ensuite relancer une autre grilles de mots.
+*/
+
+let randomPlaceWords = function(matrix, valid_words) {
+  for (let i = 0; i < valid_words.length; i++) {
+    while (1) {
+      let row = Math.floor(Math.random() * 17);
+      let col = Math.floor(Math.random() * 17);
+      let orientation = Math.floor(Math.random() * 4); // horizontal, vertical, diagonal up, diagonal down
+      let reverse_word = Math.floor(Math.random() * 2); // word in reverse order or not 
+      if (tryPosition(matrix, valid_words[i], row, col)) {
+        placeWord(matrix, valid_words[i], row, col);
+        break ;
+      }
+    }
+  }
+}
 
 let toMatrix = (arr, width) => 
     arr.reduce((rows, key, index) => (index % width == 0 ? rows.push([key]) 
       : rows[rows.length-1].push(key)) && rows, []);
 
 
-let initGame = function(input_str) {
-  let matrix = toMatrix(input_str.split('').map((x) => ({ letter: x, is_found: 0 })), 17); 
+let initGame = function(input_str, valid_words) {
+  let matrix = toMatrix(input_str.split('').map((x) => 
+    ({ letter: x, is_found: 0, is_part_of_word: 0 })), 17);
+  randomPlaceWords(matrix, valid_words);
   return (matrix);
 }
+
+let randomString = function() {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  for (var i = 0; i < 17*17; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+}
+
 
 export default {
   name: 'app',
   data () {
 
-    let input_str = 
+    let input_str = randomString();
+    /*
       "cardefghijklmnopi" + 
       "nstuiwxyzxhxxxbmt" + 
       "mpxxxaxxxxgxxwaxy" + 
       "ejxxxxgxxxsxhishm" + 
-      "xxxxxxxonxlxqndus" + 
+      "xxxxxxxonxlxqtdos" + 
       "pixxxxxynxlxqndus" + 
       "elxxxxxkxakxaeusb" +
-      "rzxxxxxsxxlxksxxr" + 
+      "rzxxxxxsxxlxksxer" + 
       "ipxhelloworldswec" + 
       "esxxcsxdxxoxjxyxy" + 
       "nsxxjdxkxxlxyxrbi" + 
       "chxxjyxmxxpxwxeng" + 
       "egxxdkxrxxexsxvwb" + 
-      "doxxwwxjxxhxtedhj" + 
-      "eppxjaxnxxjxrxins" + 
-      "koxxuxxzxxssxxkje" +
-      "tvxenigmaxexaffdy";
-    
+      "doxxwwxtxxhxtedhj" + 
+      "eppxjaxnaxjxrxins" + 
+      "koxxuxxzxhssxxkje" +
+      "tvxenigmaxwxrepus";
+    */
     const valid_words = [
       { str: 'helloworld', found_state: 0 },
       { str: 'hello', found_state: 0 }, 
@@ -76,59 +107,22 @@ export default {
       { str: 'witness', found_state: 0 },
       { str: 'diagonal', found_state: 0 },
       { str: 'top', found_state: 0 },
+      { str: 'super', found_state: 0 },
+      { str: 'what', found_state: 0 },
       
     ];
       
     return {
-      x1: -1,
-      x2: -1,
-      y1: -1,
-      y2: -1,
-      click_state: -1,
       valid_words: valid_words,
-      letter_key: 0,
       input_str: input_str,
       rows: [],
-      selection: "",
     }
   },
   created: function () {
-    this.rows = initGame(this.input_str);
-  },
-  methods: {
-    handleClick: function(row, col) {
-      console.log(this.rows);
-      console.log(row, col);
-      
-      if (this.click_state == - 1) {
-        this.x1 = row;
-        this.y1 = col;
-        this.click_state = 0;
-      }
-      else if (this.click_state == 0) {
-        this.x2 = row;
-        this.y2 = col;
-        this.click_state = 1;
-        this.selection = walkWord(this.rows, this.x1, this.y1, this.x2, this.y2, false);
-        console.log("selection: " + this.selection);
-        if (isValidWord(this.selection, this.valid_words)) {
-          walkWord(this.rows, this.x1, this.y1, this.x2, this.y2, true);
-          deleteWordFromList(this.selection, this.valid_words);
-          this.letter_key += 1;
-        }
-      }
-      else if (this.click_state == 1) {
-        this.x1 = row;
-        this.y1 = col;
-        this.x2 = -1;
-        this.y2 = -1;
-        this.click_state = 0;
-      }
-    },
+    this.rows = initGame(this.input_str, this.valid_words);
   },
   components: {
-    Letter,
-    WordList,
+    Game,
   }
 }
 
