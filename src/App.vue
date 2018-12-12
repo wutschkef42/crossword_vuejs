@@ -57,7 +57,7 @@ let toMatrix = (arr, width) =>
 let initGame = function(input_str, valid_words) {
   let matrix = toMatrix(input_str.split('').map((x) => 
     ({ letter: x, is_found: 0, is_part_of_word: 0 })), 17);
-  randomPlaceWords(matrix, valid_words);
+  //randomPlaceWords(matrix, valid_words);
   return (matrix);
 }
 
@@ -76,8 +76,8 @@ export default {
   name: 'app',
   data () {
 
-    let input_str = randomString();
-    /*
+    let input_str = //randomString();
+    
       "cardefghijklmnopi" + 
       "nstuiwxyzxhxxxbmt" + 
       "mpxxxaxxxxgxxwaxy" + 
@@ -95,7 +95,7 @@ export default {
       "eppxjaxnaxjxrxins" + 
       "koxxuxxzxhssxxkje" +
       "tvxenigmaxwxrepus";
-    */
+    
     const valid_words = [
       { str: 'helloworld', found_state: 0 },
       { str: 'hello', found_state: 0 }, 
