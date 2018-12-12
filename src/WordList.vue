@@ -17,17 +17,6 @@
 
 export default {
   name: 'wordList',
-  data () {
-    
-    const x = 0;
-    return {
-        x: this.x,
-        
-    }
-  },
-  methods: {
-
-  },
   props: ['word_list'],
 }
 
@@ -40,7 +29,6 @@ export default {
         height: 45px;
         text-align: left;   
     }
-
     .cross-out {
         text-decoration: line-through;
     }

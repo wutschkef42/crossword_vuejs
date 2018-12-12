@@ -1,8 +1,8 @@
 
 <template>
 
-    <p class="found" v-if="found">{{ char }}</p>
-    <p class="blank" v-else>{{ char }}</p>
+    <p class="letter found" v-if="found">{{ char }}</p>
+    <p class="letter blank" v-else>{{ char }}</p>
 
 </template>
 
@@ -11,17 +11,6 @@
 
 export default {
   name: 'letter',
-  data () {
-    
-    const x = 0;
-    return {
-        x: this.x,
-        
-    }
-  },
-  methods: {
-
-  },
   props: ['char', 'found'],
 }
 
@@ -30,10 +19,20 @@ export default {
 
 <style>
 
+    .letter {
+        cursor: pointer;
+        padding:5px 8px 8px 7px;
+    }
+
+    .letter:hover {
+        background-color: gray;
+    }
+
     .found {
         color: green;
-        font-weight: bold;
+        font-weight: bold;     
     }
+    
     .blank {
         color: white;
     }

@@ -7,12 +7,9 @@
       <h1>Crossword Puzzle</h1>  
       <ul v-for="(row, row_index) in rows">
         <li v-on:click="handleClick(row_index, col_index)" v-for="(letter, col_index) in row">
-          <letter v-bind:char=letter v-bind:found="is_found[row_index][col_index]" :key="letter_key"></letter>
+          <letter v-bind:char=letter.letter v-bind:found=letter.is_found :key="letter_key"></letter>
         </li>
-      </ul>
-      
-      
-      
+      </ul>      
     </div>
     <div id="words">
       <h1 id="list-header">Word List</h1>
@@ -20,7 +17,6 @@
     </div>
   </div>
   
-
 </template>
 
 
@@ -29,43 +25,15 @@
 import Vue from 'vue'
 import Letter from './Letter.vue';
 import WordList from './WordList.vue';
+import { walkWord } from './walkBoard.js';
 
 Vue.component('letter', Letter);
 Vue.component('word-list', WordList);
 
-let checkCoords = function(x1, y1, x2, y2) {
-  if (x1 != x2 && y1 != y2 || x1 == x2 && y1 == y2) {
-    return (false);
-  } else {
-    return (true);
-  }
-}
 
-let checkSolution = function(rows, x1, y1, x2, y2, valid_words) {
-  let selection = ""; 
-  let tmp;
 
-  if (x1 == x2) {
-    if (y1 > y2) {
-      tmp = y1;
-      y1 = y2;
-      y2 = tmp;
-    }
-    while (y1 <= y2) {
-      selection += rows[x1][y1];
-      y1++;
-    }
-  } else {
-    if (x1 > x2) {
-      tmp = x1;
-      x1 = x2;
-      x2 = tmp;
-    }
-    while (x1 <= x2) {
-      selection += rows[x1][y1];
-      x1++;
-    }
-  }
+
+let isValidWord = function(selection, valid_words) {
   let n = valid_words.length;
   for (let i = 0; i < n; i++) {
     if (valid_words[i].str === selection) {
@@ -75,31 +43,7 @@ let checkSolution = function(rows, x1, y1, x2, y2, valid_words) {
   return (false);  
 }
 
-let deleteWordFromList = function(rows, x1, y1, x2, y2, valid_words) {
-  let selection = ""; 
-  let tmp;
-
-  if (x1 == x2) {
-    if (y1 > y2) {
-      tmp = y1;
-      y1 = y2;
-      y2 = tmp;
-    }
-    while (y1 <= y2) {
-      selection += rows[x1][y1];
-      y1++;
-    }
-  } else {
-    if (x1 > x2) {
-      tmp = x1;
-      x1 = x2;
-      x2 = tmp;
-    }
-    while (x1 <= x2) {
-      selection += rows[x1][y1];
-      x1++;
-    }
-  }  
+let deleteWordFromList = function(selection, valid_words) {
   let n = valid_words.length;
   for (let i = 0; i < n; i++) {
     if (valid_words[i].str === selection) {
@@ -108,99 +52,38 @@ let deleteWordFromList = function(rows, x1, y1, x2, y2, valid_words) {
   }
 }
 
-let markAsFound = function(is_found, x1, y1, x2, y2) {
-  if (x1 == x2) {
-    while (y1 <= y2) {
-      is_found[x1][y1] = 1;
-      y1++;
-    }
-  } else {
-    while (x1 <= x2) {
-      is_found[x1][y1] = 1;
-      x1++;
-    }
-  }
-}
+let toMatrix = (arr, width) => 
+    arr.reduce((rows, key, index) => (index % width == 0 ? rows.push([key]) 
+      : rows[rows.length-1].push(key)) && rows, []);
 
-let checkWinner = function(rows, x1, y1, x2, y2, valid_words) {
 
-  if (checkCoords(x1, y1, x2, y2) 
-      && checkSolution(rows, x1, y1, x2, y2, valid_words)) {
-    return (true);
-  }
-  return (false);
-};
-
-let markWinner = function(rows, x1, y1, x2, y2, is_found) {
-  let tmp;
-
-  if (x1 == x2) {
-    if (y1 > y2) {
-      tmp = y1;
-      y1 = y2;
-      y2 = tmp;
-    }
-    while (y1 <= y2) {
-      is_found[x1][y1] = 1;
-      y1++;
-    }
-  } else {
-    if (x1 > x2) {
-      tmp = x1;
-      x1 = x2;
-      x2 = tmp;
-    }
-    while (x1 <= x2) {
-      is_found[x1][y1] = 1;
-      x1++;
-    }
-  }
+let initGame = function(input_str) {
+  let matrix = toMatrix(input_str.split('').map((x) => ({ letter: x, is_found: 0 })), 17); 
+  return (matrix);
 }
 
 export default {
   name: 'app',
   data () {
-    
-    const rows = 
-      [
-        [ 'c', 'a', 'r', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'i' ],
-        [ 'n', 's', 't', 'u', 'i', 'w', 'x', 'y', 'z', 'x', 'h', 'x', 'x', 'x', 'b', 'm', 't' ],
-        [ 'm', 'p', 'x', 'x', 'x', 'a', 'x', 'x', 'x', 'x', 'g', 'x', 'x', 'w', 'a', 'x', 'y' ],
-        [ 'e', 'j', 'x', 'x', 'x', 'x', 'g', 'x', 'x', 'x', 's', 'x', 'h', 'i', 's', 'h', 'm' ],
-        [ 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'o', 'x', 'x', 'a', 'x', 'g', 't', 'x', 'o', 'u' ],
-        [ 'p', 'i', 'x', 'x', 'x', 'x', 'x', 'y', 'n', 'x', 'l', 'x', 'q', 'n', 'd', 'u', 's' ],
-        [ 'e', 'l', 'x', 'x', 'x', 'x', 'x', 'k', 'x', 'a', 'k', 'x', 'a', 'e', 'u', 's', 'b' ],
-        [ 'r', 'z', 'x', 'x', 'x', 'x', 'x', 's', 'x', 'x', 'l', 'x', 'k', 's', 'x', 'x', 'r' ],
-        [ 'i', 'p', 'x', 'h', 'e', 'l', 'l', 'o', 'w', 'o', 'r', 'l', 'd', 's', 'w', 'e', 'c' ],
-        [ 'e', 's', 'x', 'x', 'c', 's', 'x', 'd', 'x', 'x', 'o', 'x', 'j', 'x', 'y', 'x', 'y' ],
-        [ 'n', 's', 'x', 'x', 'j', 'd', 'x', 'k', 'x', 'x', 'l', 'x', 'y', 'x', 'r', 'b', 'i' ],
-        [ 'c', 'h', 'x', 'x', 'j', 'y', 'x', 'm', 'x', 'x', 'p', 'x', 'w', 'x', 'e', 'n', 'g' ],
-        [ 'e', 'g', 'x', 'x', 'd', 'k', 'x', 'r', 'x', 'x', 'e', 'x', 's', 'x', 'v', 'w', 'b' ],
-        [ 'd', 'o', 'x', 'x', 'w', 'w', 'x', 'j', 'x', 'x', 'h', 'x', 't', 'e', 'd', 'h', 'j' ],
-        [ 'f', 'p', 'x', 'x', 'j', 'a', 'x', 'n', 'x', 'x', 'j', 'x', 'r', 'x', 'i', 'n', 's' ],
-        [ 'k', 'a', 'x', 'x', 'u', 'x', 'x', 'z', 'x', 'x', 's', 's', 'x', 'x', 'k', 'j', 'e' ],
-        [ 'l', 'v', 'x', 'e', 'n', 'i', 'g', 'm', 'a', 'x', 'e', 'x', 'a', 'f', 'f', 'd', 'y' ], 
-      ];
-      let is_found = 
-      [
-        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-      ];
+
+    let input_str = 
+      "cardefghijklmnopi" + 
+      "nstuiwxyzxhxxxbmt" + 
+      "mpxxxaxxxxgxxwaxy" + 
+      "ejxxxxgxxxsxhishm" + 
+      "xxxxxxxonxlxqndus" + 
+      "pixxxxxynxlxqndus" + 
+      "elxxxxxkxakxaeusb" +
+      "rzxxxxxsxxlxksxxr" + 
+      "ipxhelloworldswec" + 
+      "esxxcsxdxxoxjxyxy" + 
+      "nsxxjdxkxxlxyxrbi" + 
+      "chxxjyxmxxpxwxeng" + 
+      "egxxdkxrxxexsxvwb" + 
+      "doxxwwxjxxhxtedhj" + 
+      "eppxjaxnxxjxrxins" + 
+      "koxxuxxzxxssxxkje" +
+      "tvxenigmaxexaffdy";
     
     const valid_words = [
       { str: 'helloworld', found_state: 0 },
@@ -212,31 +95,31 @@ export default {
       { str: 'car', found_state: 0 },
       { str: 'witness', found_state: 0 },
       { str: 'diagonal', found_state: 0 },
-      { str: 'inverse', found_state: 0 },
+      { str: 'top', found_state: 0 },
+      
     ];
-    
-    let x1 = -1;
-    let y1 = -1;
-    let x2 = -1;
-    let y2 = -1;
-    let click_state = -1;
-    
-    
+      
     return {
-      x1: x1,
-      x2: x2,
-      y1: y1,
-      y2: y2,
-      click_state: click_state,
+      x1: -1,
+      x2: -1,
+      y1: -1,
+      y2: -1,
+      click_state: -1,
       valid_words: valid_words,
-      is_found: is_found,
-      rows: rows,
       letter_key: 0,
+      input_str: input_str,
+      rows: [],
+      selection: "",
     }
+  },
+  created: function () {
+    this.rows = initGame(this.input_str);
   },
   methods: {
     handleClick: function(row, col) {
-      let tmp;
+      console.log(this.rows);
+      console.log(row, col);
+      
       if (this.click_state == - 1) {
         this.x1 = row;
         this.y1 = col;
@@ -246,9 +129,11 @@ export default {
         this.x2 = row;
         this.y2 = col;
         this.click_state = 1;
-        if (checkWinner(this.rows, this.x1, this.y1, this.x2, this.y2, this.valid_words)) {
-          markWinner(this.rows, this.x1, this.y1, this.x2, this.y2, this.is_found);    
-          deleteWordFromList(this.rows, this.x1, this.y1, this.x2, this.y2, this.valid_words);
+        this.selection = walkWord(this.rows, this.x1, this.y1, this.x2, this.y2, false);
+        console.log("selection: " + this.selection);
+        if (isValidWord(this.selection, this.valid_words)) {
+          walkWord(this.rows, this.x1, this.y1, this.x2, this.y2, true);
+          deleteWordFromList(this.selection, this.valid_words);
           this.letter_key += 1;
         }
       }
@@ -303,23 +188,21 @@ li {
 }
 
 p {
-  padding: 0 5px;
   margin: 0;
-  font-size: 28px;
-  
+  font-size: 22px;
 }
+
 a {
   color: #42b983;
 }
 
 #game-board {
   float: left;
-  width: 800px;
+  width: 900px;
 }
 
 #words {
   float: left;
-  padding-left: 40px;
   padding-top: 100px;
 }
 
