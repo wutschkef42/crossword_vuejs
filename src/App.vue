@@ -26,31 +26,11 @@ import Vue from 'vue'
 import Letter from './Letter.vue';
 import WordList from './WordList.vue';
 import { walkWord } from './walkBoard.js';
+import {isValidWord, deleteWordFromList } from './manageWordList.js';
 
 Vue.component('letter', Letter);
 Vue.component('word-list', WordList);
 
-
-
-
-let isValidWord = function(selection, valid_words) {
-  let n = valid_words.length;
-  for (let i = 0; i < n; i++) {
-    if (valid_words[i].str === selection) {
-      return (true);
-    }
-  }
-  return (false);  
-}
-
-let deleteWordFromList = function(selection, valid_words) {
-  let n = valid_words.length;
-  for (let i = 0; i < n; i++) {
-    if (valid_words[i].str === selection) {
-      valid_words[i].found_state = 1;
-    }
-  }
-}
 
 let toMatrix = (arr, width) => 
     arr.reduce((rows, key, index) => (index % width == 0 ? rows.push([key]) 
