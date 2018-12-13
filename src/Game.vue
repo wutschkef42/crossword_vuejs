@@ -25,16 +25,6 @@ import { walkWord } from './walkBoard.js';
 import {isValidWord, deleteWordFromList } from './manageWordList.js';
 import { SELECT, HIGHLIGHT, CHECK, SET } from './constants.js';
 
-let toMatrix = (arr, width) => 
-    arr.reduce((rows, key, index) => (index % width == 0 ? rows.push([key]) 
-      : rows[rows.length-1].push(key)) && rows, []);
-
-let initGame = (input_str) => {
-  let matrix = toMatrix(input_str.split('').map((x) =>
-    ({ letter: x, is_found: 0, is_part_of_word: 0 })), 17);
-  return (matrix);
-}
-
 export default {
   name: 'game',
   data () {
@@ -48,6 +38,14 @@ export default {
     }
   },
   methods: {
+
+    /*
+    ** user input requires two clicks; on the first and last character of the word
+    ** click_state keeps track of the state of user interaction
+    ** everytime the user selects a pair of characters, handleClick checks if the
+    ** selected characters are a valid word and highlighs them if they are valid
+    */
+   
     handleClick: function(row, col) {      
       if (this.click_state == - 1) {
         this.x1 = row;

@@ -10,6 +10,12 @@ import { walkWord } from './walkBoard.js';
 import { isValidWord, deleteWordFromList } from './manageWordList.js';
 import { SET, CHECK, HORIZONTAL, VERTICAL, DIAG_UP, DIAG_DOWN } from './constants.js';
 
+/*
+** (row, col) is the leftmost coordinate of the word on the map
+** orientation is either horizontal, vertical or diagonal
+** function returns the rightmost coordinate of the word on the map
+*/
+
 let calcCoords = (word, orientation, row, col) => {
   if (orientation == HORIZONTAL) {
     return ({ x2: row + word.length - 1, y2: col });
@@ -22,6 +28,11 @@ let calcCoords = (word, orientation, row, col) => {
   }
 }
 
+/*
+** valid coordinates are between 0 and 16
+** and lie horizontally, vertically or diagonally on the map
+**/
+
 let invalidCoords = (x1, y1, x2, y2) => {
   if (x2 > 16 || y2 > 16 || x2 < 0 || y2 < 0)
     return true;
@@ -33,6 +44,12 @@ let invalidCoords = (x1, y1, x2, y2) => {
   }
   return (true);
 }
+
+
+/*
+** randomly distribute the list of words on the map
+** generate random coordinates, random orientations and optionally reverse word
+*/
 
 let randomPlaceWords = (matrix, valid_words) => {
   for (let i = 0; i < valid_words.length; i++) {
@@ -54,9 +71,20 @@ let randomPlaceWords = (matrix, valid_words) => {
   }
 }
 
+/* 
+** convert one-dimensional array to two-dimensional array
+** with width-many elements per row
+*/
+
 let toMatrix = (arr, width) => 
     arr.reduce((rows, key, index) => (index % width == 0 ? rows.push([key]) 
       : rows[rows.length-1].push(key)) && rows, []);
+
+
+/*
+** take list of words and random input string
+** generate map with randomly distributed words
+*/
 
 let initGame = (input_str, valid_words) => {
   let matrix = toMatrix(input_str.split('').map((x) => 
@@ -65,9 +93,18 @@ let initGame = (input_str, valid_words) => {
   return (matrix);
 }
 
+/*
+** take array of words and convert each word into object with 
+** a flag that keeps track of the word state
+*/
+
 let initWordList = (valid_words) => {
   return (valid_words.map((x) => ({ str: x.toUpperCase(), found_state: 0 })));
 }
+
+/*
+** generate random string with enough characters to fill map
+*/
 
 let randomString = () => {
   var text = "";
