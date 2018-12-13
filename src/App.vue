@@ -1,13 +1,14 @@
 
 <template>
-  <game v-bind:valid_words="valid_words" v-bind:rows="rows" />
+  <game v-if=game_is_running v-bind:valid_words="valid_words" v-bind:rows="rows" />
+  <button v-else @click="startGame" id="start-button">Start Game</button>
 </template>
 
 <script>
 import Vue from 'vue'
 import Game from './Game.vue';
 import { walkWord } from './walkBoard.js';
-import { isValidWord, deleteWordFromList } from './manageWordList.js';
+import { initWordList, isValidWord, deleteWordFromList } from './manageWordList.js';
 import { SET, CHECK, HORIZONTAL, VERTICAL, DIAG_UP, DIAG_DOWN } from './constants.js';
 
 /*
@@ -44,7 +45,6 @@ let invalidCoords = (x1, y1, x2, y2) => {
   }
   return (true);
 }
-
 
 /*
 ** randomly distribute the list of words on the map
@@ -94,15 +94,6 @@ let initGame = (input_str, valid_words) => {
 }
 
 /*
-** take array of words and convert each word into object with 
-** a flag that keeps track of the word state
-*/
-
-let initWordList = (valid_words) => {
-  return (valid_words.map((x) => ({ str: x.toUpperCase(), found_state: 0 })));
-}
-
-/*
 ** generate random string with enough characters to fill map
 */
 
@@ -127,6 +118,7 @@ export default {
       valid_words: initWordList(words),
       input_str: input_str,
       rows: [],
+      game_is_running: 0,
     }
   },
   created: function () {
@@ -134,6 +126,11 @@ export default {
   },
   components: {
     Game,
+  },
+  methods: {
+    startGame: function() {
+      this.game_is_running = 1;
+    },
   }
 }
 </script>
@@ -181,5 +178,14 @@ a {
 }
 #list-header {
   text-decoration: underline;
+}
+#start-button {
+  display: block;
+  height: 60px;
+  width: 200px;
+  margin: 0 auto;
+  margin-top: 50%;
+  font-size: 22px;
+  cursor: pointer;  
 }
 </style>

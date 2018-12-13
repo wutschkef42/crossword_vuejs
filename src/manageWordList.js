@@ -1,5 +1,14 @@
 
 /*
+** take array of words and convert each word into object with 
+** a flag that keeps track of the word state
+*/
+
+let initWordList = (valid_words) => {
+  return (valid_words.map((x) => ({ str: x.toUpperCase(), found_state: 0 })));
+}
+
+/*
 ** check if selected word matches one of the valid words
 */
 
@@ -26,4 +35,4 @@ let deleteWordFromList = function(selection, valid_words) {
   }
 }
 
-export { isValidWord, deleteWordFromList };
+export { initWordList, isValidWord, deleteWordFromList };

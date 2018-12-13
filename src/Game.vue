@@ -3,7 +3,7 @@
   <div id="app">
     <div id = "game-board">
       <h1>Crossword Puzzle</h1>  
-      <ul v-for="(row, row_index) in rows">
+      <ul v-if="!is_paused" v-for="(row, row_index) in rows">
         <li v-on:click="handleClick(row_index, col_index)" 
           v-for="(letter, col_index) in row">
           <letter v-bind:char=letter.letter v-bind:found=letter.is_found></letter>
@@ -14,6 +14,10 @@
       <h1 id="list-header">Word List</h1>
       <word-list  v-bind:word_list="valid_words"/>
     </div>
+    <div v-if="is_paused" v-bind:selection=selection id="message">
+      <p>You have clicked the word '{{selection}}'</p><br/>
+      <button @click="resumeGame">Resume Game</button>
+    </div>
   </div>
 </template>
 
@@ -22,8 +26,12 @@ import Vue from 'vue'
 import Letter from './Letter.vue';
 import WordList from './WordList.vue';
 import { walkWord } from './walkBoard.js';
-import {isValidWord, deleteWordFromList } from './manageWordList.js';
+import { isValidWord, deleteWordFromList } from './manageWordList.js';
 import { SELECT, HIGHLIGHT, CHECK, SET } from './constants.js';
+
+let actionHook = (selection) => {
+  console.log(selection);
+}
 
 export default {
   name: 'game',
@@ -35,6 +43,7 @@ export default {
       y2: -1,
       click_state: -1,
       selection: "",
+      is_paused: 0,
     }
   },
   methods: {
@@ -45,7 +54,7 @@ export default {
     ** everytime the user selects a pair of characters, handleClick checks if the
     ** selected characters are a valid word and highlighs them if they are valid
     */
-   
+
     handleClick: function(row, col) {      
       if (this.click_state == - 1) {
         this.x1 = row;
@@ -62,6 +71,7 @@ export default {
           walkWord(this.rows, this.x1, this.y1, this.x2, this.y2,
             "", HIGHLIGHT);
           deleteWordFromList(this.selection, this.valid_words);
+          this.is_paused = 1;
         }
       }
       else if (this.click_state == 1) {
@@ -72,6 +82,9 @@ export default {
         this.click_state = 0;
       }
     },
+    resumeGame: function() {
+      this.is_paused = 0;
+    }
   },
   components: {
     Letter,
@@ -94,6 +107,7 @@ body {
   text-align: center;
   color: white;
   margin-top: 60px;
+  min-width: 1200px;
 }
 h1, h2 {
   font-weight: normal;
@@ -124,5 +138,10 @@ a {
 }
 #list-header {
   text-decoration: underline;
+}
+#message {
+  float: left;
+  padding-left: 220px;
+  padding-top: 30px;
 }
 </style>
