@@ -1,6 +1,5 @@
 
 <template>
-
     <div id="word-list">
         <ul>
             <li v-for="word in word_list">
@@ -9,19 +8,14 @@
             </li>
         </ul>
     </div>
-
 </template>
 
-
 <script>
-
 export default {
   name: 'wordList',
   props: ['word_list'],
 }
-
 </script>
-
 
 <style>
     #word-list ul li {
