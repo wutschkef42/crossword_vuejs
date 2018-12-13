@@ -1,13 +1,15 @@
 
 <template>
     <p class="letter found" v-if="found">{{ char }}</p>
+    <p class="letter selected" v-else-if="is_selected">{{ char }}</p>
+    <p class="letter selected" v-else-if="is_clicked">{{ char }}</p>
     <p class="letter blank" v-else>{{ char }}</p>
 </template>
 
 <script>
 export default {
   name: 'letter',
-  props: ['char', 'found'],
+  props: ['char', 'found', 'is_selected', 'is_clicked'],
 }
 </script>
 
@@ -17,6 +19,9 @@ export default {
         padding:5px 8px 8px 7px;
     }
     .letter:hover {
+        background-color: gray;
+    }
+    .selected {
         background-color: gray;
     }
     .found {

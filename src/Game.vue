@@ -6,7 +6,7 @@
       <ul v-if="!is_paused" v-for="(row, row_index) in rows">
         <li v-on:click="handleClick(row_index, col_index)" 
           v-for="(letter, col_index) in row">
-          <letter v-bind:char=letter.letter v-bind:found=letter.is_found></letter>
+          <letter v-bind:char=letter.letter v-bind:found=letter.is_found v-bind:is_selected=rows[row_index][col_index].is_selected v-bind:is_clicked="checkClick(row_index, col_index)"></letter>
         </li>
       </ul>      
     </div>
@@ -27,10 +27,42 @@ import Letter from './Letter.vue';
 import WordList from './WordList.vue';
 import { walkWord } from './walkBoard.js';
 import { isValidWord, deleteWordFromList } from './manageWordList.js';
-import { SELECT, HIGHLIGHT, CHECK, SET } from './constants.js';
+import { SELECT, HIGHLIGHT, CHECK, SET, CLEAR_HIGHLIGHT, SET_HIGHLIGHT } from './constants.js';
 
 let actionHook = (selection) => {
   console.log(selection);
+}
+
+
+let invalidCoords = (x1, y1, x2, y2) => {
+  if (x2 > 16 || y2 > 16 || x2 < 0 || y2 < 0)
+    return true;
+  if (x1 == x2 || y1 == y2) {
+    return false ;
+  }
+  if (Math.abs(x1 - x2) == Math.abs(y1 - y2)) {
+    return (false);
+  }
+  return (true);
+}
+
+
+let clearPrevHighlight = (rows, x1, y1, x2, y2) => {
+  if (!invalidCoords(x1, y1, x2, y2))
+    walkWord(rows, x1, y1, x2, y2, "", CLEAR_HIGHLIGHT);
+}
+
+let setNewHighlight = (rows, x1, y1, x2, y2) => {
+  if (!invalidCoords(x1, y1, x2, y2))
+    walkWord(rows, x1, y1, x2, y2, "", SET_HIGHLIGHT);
+}
+
+let flushHighlight = (rows) => {
+  for (let i = 0; i < 17; i++) {
+    for (let j = 0; j < 17; j++) {
+      rows[i][j].is_selected = 0;
+    }
+  }
 }
 
 export default {
@@ -41,6 +73,8 @@ export default {
       x2: -1,
       y1: -1,
       y2: -1,
+      x_hover: -1,
+      y_hover: -1,
       click_state: -1,
       selection: "",
       is_paused: 0,
@@ -59,11 +93,13 @@ export default {
       if (this.click_state == - 1) {
         this.x1 = row;
         this.y1 = col;
+        this.rows[row][col].is_selected = 1;
         this.click_state = 0;
       }
       else if (this.click_state == 0) {
         this.x2 = row;
         this.y2 = col;
+        this.rows[row][col].is_selected = 0;
         this.click_state = 1;
         this.selection = walkWord(this.rows, this.x1, this.y1,
           this.x2, this.y2, "", SELECT);
@@ -75,15 +111,35 @@ export default {
         }
       }
       else if (this.click_state == 1) {
+        //flushHighlight(this.rows);
+        walkWord(this.rows, this.x1, this.y1, row, col, "", CLEAR_HIGHLIGHT);
+        this.rows[this.x1][this.y1].is_selected = 0;
         this.x1 = row;
         this.y1 = col;
+        //this.rows[row][col].is_selected = 1;
         this.x2 = -1;
         this.y2 = -1;
         this.click_state = 0;
+        
+        
       }
+      console.log(this.click_state);
     },
     resumeGame: function() {
       this.is_paused = 0;
+    },
+    highlightSelection: function(row, col) {
+      if (this.click_state == 0 || this.click_state == 1) {
+        clearPrevHighlight(this.rows, this.x1, this.y1, this.x_hover, this.y_hover);
+        this.x_hover = row;
+        this.y_hover = col;
+        setNewHighlight(this.rows, this.x1, this.y1, this.x_hover, this.y_hover);
+      }
+    },
+    checkClick(row, col) {
+      if (row == this.x1 && col == this.y1)
+        return (true);
+      return (false);
     }
   },
   components: {

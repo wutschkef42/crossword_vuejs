@@ -1,5 +1,5 @@
 
-import { HIGHLIGHT, CHECK, SET } from './constants.js'
+import { HIGHLIGHT, CHECK, SET, CLEAR_HIGHLIGHT, SET_HIGHLIGHT } from './constants.js'
 
 
 /*
@@ -34,10 +34,13 @@ let walkWord = (rows, x1, y1, x2, y2, word = "", op_code) => {
     selection += rows[x1][y1].letter;
     rows[x1][y1].is_found = op_code == HIGHLIGHT ? 1 : 0;
     positionOk = rows[x1][y1].is_part_of_word ? false : true;
-    if (!positionOk && op_code == CHECK)
-      return false;
+    
     rows[x1][y1].letter = op_code == SET ? arr_word[i++] : rows[x1][y1].letter;
     rows[x1][y1].is_part_of_word = op_code == SET ? 1 : 0;
+    rows[x1][y1].is_selected = op_code == CLEAR_HIGHLIGHT ? 0 : rows[x1][y1].is_selected;
+    rows[x1][y1].is_selected = op_code == SET_HIGHLIGHT ? 1 : rows[x1][y1].is_selected;
+    if (!positionOk && op_code == CHECK)
+      return false;
     if (y1 < y2)
       y1++;
     else if (y1 > y2)
@@ -48,10 +51,13 @@ let walkWord = (rows, x1, y1, x2, y2, word = "", op_code) => {
     selection += rows[x1][y1].letter;
     rows[x1][y1].is_found = op_code == HIGHLIGHT ? 1 : 0;
     positionOk = rows[x1][y1].is_part_of_word ? false : true;
-    if (!positionOk && op_code == CHECK)
-      return false;
+   
     rows[x1][y1].letter = op_code == SET ? arr_word[i++] : rows[x1][y1].letter;
     rows[x1][y1].is_part_of_word = op_code == SET ? 1 : 0;
+    rows[x1][y1].is_selected = op_code == CLEAR_HIGHLIGHT ? 0 : rows[x1][y1].is_selected;
+    rows[x1][y1].is_selected = op_code == SET_HIGHLIGHT ? 1 : rows[x1][y1].is_selected;
+    if (!positionOk && op_code == CHECK)
+      return false;
     if (y1 < y2)
       y1++;
     else
@@ -60,10 +66,13 @@ let walkWord = (rows, x1, y1, x2, y2, word = "", op_code) => {
   selection += rows[x1][y1].letter;
   rows[x1][y1].is_found = op_code == HIGHLIGHT ? 1 : 0;
   positionOk = rows[x1][y1].is_part_of_word ? false : true;
-  if (!positionOk && op_code == CHECK)
-    return false;
+  
   rows[x1][y1].letter = op_code == SET ? arr_word[i++] : rows[x1][y1].letter;
   rows[x1][y1].is_part_of_word = op_code == SET ? 1 : 0;
+  rows[x1][y1].is_selected = op_code == CLEAR_HIGHLIGHT ? 0 : rows[x1][y1].is_selected;
+  rows[x1][y1].is_selected = op_code == SET_HIGHLIGHT ? 1 : rows[x1][y1].is_selected;
+  if (!positionOk && op_code == CHECK)
+    return false;
   return (op_code == CHECK ? positionOk : selection);
 }
 

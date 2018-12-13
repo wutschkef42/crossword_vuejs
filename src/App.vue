@@ -88,7 +88,7 @@ let toMatrix = (arr, width) =>
 
 let initGame = (input_str, valid_words) => {
   let matrix = toMatrix(input_str.split('').map((x) => 
-    ({ letter: x, is_found: 0, is_part_of_word: 0 })), 17);
+    ({ letter: x, is_found: 0, is_part_of_word: 0, is_selected: 0 })), 17);
   randomPlaceWords(matrix, valid_words);
   return (matrix);
 }
