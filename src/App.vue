@@ -10,7 +10,7 @@ import { walkWord } from './walkBoard.js';
 import { isValidWord, deleteWordFromList } from './manageWordList.js';
 import { SET, CHECK, HORIZONTAL, VERTICAL, DIAG_UP, DIAG_DOWN } from './constants.js';
 
-let calcCoords = function(word, orientation, row, col) {
+let calcCoords = (word, orientation, row, col) => {
   if (orientation == HORIZONTAL) {
     return ({ x2: row + word.length - 1, y2: col });
   } else if (orientation == VERTICAL) {
@@ -22,7 +22,7 @@ let calcCoords = function(word, orientation, row, col) {
   }
 }
 
-let invalidCoords = function(x1, y1, x2, y2) {
+let invalidCoords = (x1, y1, x2, y2) => {
   if (x2 > 16 || y2 > 16 || x2 < 0 || y2 < 0)
     return true;
   if (x1 == x2 || y1 == y2) {
@@ -34,18 +34,18 @@ let invalidCoords = function(x1, y1, x2, y2) {
   return (true);
 }
 
-let randomPlaceWords = function(matrix, valid_words) {
+let randomPlaceWords = (matrix, valid_words) => {
   for (let i = 0; i < valid_words.length; i++) {
     while (1) {
       let row = Math.floor(Math.random() * 17);
       let col = Math.floor(Math.random() * 17);
-      let orientation = Math.floor(Math.random() * 4); // horizontal, vertical, diagonal up, diagonal down
-      let reverse_word = Math.floor(Math.random() * 2); // word in reverse order or not 
+      let orientation = Math.floor(Math.random() * 4);
+      let reverse_word = Math.floor(Math.random() * 2);
       let x2y2 = calcCoords(valid_words[i].str, orientation, row, col);
-      let word = reverse_word ? valid_words[i].str.split("").reverse().join("") : valid_words[i].str;
-      if (invalidCoords(row, col, x2y2.x2, x2y2.y2)) {
+      let word = reverse_word ? valid_words[i].str.split("").
+        reverse().join("") : valid_words[i].str;
+      if (invalidCoords(row, col, x2y2.x2, x2y2.y2))
         continue ;
-      }
       if (walkWord(matrix, row, col, x2y2.x2, x2y2.y2, word, CHECK)) {  
         walkWord(matrix, row, col, x2y2.x2, x2y2.y2, word, SET);
         break ;
@@ -58,14 +58,18 @@ let toMatrix = (arr, width) =>
     arr.reduce((rows, key, index) => (index % width == 0 ? rows.push([key]) 
       : rows[rows.length-1].push(key)) && rows, []);
 
-let initGame = function(input_str, valid_words) {
+let initGame = (input_str, valid_words) => {
   let matrix = toMatrix(input_str.split('').map((x) => 
     ({ letter: x, is_found: 0, is_part_of_word: 0 })), 17);
   randomPlaceWords(matrix, valid_words);
   return (matrix);
 }
 
-let randomString = function() {
+let initWordList = (valid_words) => {
+  return (valid_words.map((x) => ({ str: x.toUpperCase(), found_state: 0 })));
+}
+
+let randomString = () => {
   var text = "";
   var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   for (var i = 0; i < 17*17; i++) {
@@ -77,20 +81,13 @@ let randomString = function() {
 export default {
   name: 'app',
   data () {
-    let input_str = randomString();    
-    const valid_words = [
-      { str: 'APPLE', found_state: 0 },
-      { str: 'ORANGE', found_state: 0 }, 
-      { str: 'KEBAB', found_state: 0 },
-      { str: 'COCKTAIL', found_state: 0 },
-      { str: 'MUSIC', found_state: 0 },
-      { str: 'BEACH', found_state: 0 },
-      { str: 'HOMEWORK', found_state: 0 },
-      { str: 'WILDLIFE', found_state: 0 },
-      { str: 'FOOD', found_state: 0 },
+    let input_str = randomString();
+    const words = [
+      'APPLE', 'ORANGE', 'kebab', '$$$', 'BeaCH', 'Racecar', 'HOUSTON',
+      'DEEPfried', 'Helicopter', 'WILDLIFE'
     ];
     return {
-      valid_words: valid_words,
+      valid_words: initWordList(words),
       input_str: input_str,
       rows: [],
     }

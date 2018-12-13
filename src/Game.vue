@@ -4,8 +4,9 @@
     <div id = "game-board">
       <h1>Crossword Puzzle</h1>  
       <ul v-for="(row, row_index) in rows">
-        <li v-on:click="handleClick(row_index, col_index)" v-for="(letter, col_index) in row">
-          <letter v-bind:char=letter.letter v-bind:found=letter.is_found :key="letter_key"></letter>
+        <li v-on:click="handleClick(row_index, col_index)" 
+          v-for="(letter, col_index) in row">
+          <letter v-bind:char=letter.letter v-bind:found=letter.is_found></letter>
         </li>
       </ul>      
     </div>
@@ -28,8 +29,9 @@ let toMatrix = (arr, width) =>
     arr.reduce((rows, key, index) => (index % width == 0 ? rows.push([key]) 
       : rows[rows.length-1].push(key)) && rows, []);
 
-let initGame = function(input_str) {
-  let matrix = toMatrix(input_str.split('').map((x) => ({ letter: x, is_found: 0, is_part_of_word: 0 })), 17);
+let initGame = (input_str) => {
+  let matrix = toMatrix(input_str.split('').map((x) =>
+    ({ letter: x, is_found: 0, is_part_of_word: 0 })), 17);
   return (matrix);
 }
 
@@ -42,15 +44,11 @@ export default {
       y1: -1,
       y2: -1,
       click_state: -1,
-      letter_key: 0,
       selection: "",
     }
   },
   methods: {
-    handleClick: function(row, col) {
-      console.log(this.rows);
-      console.log(row, col);
-      
+    handleClick: function(row, col) {      
       if (this.click_state == - 1) {
         this.x1 = row;
         this.y1 = col;
@@ -60,12 +58,12 @@ export default {
         this.x2 = row;
         this.y2 = col;
         this.click_state = 1;
-        this.selection = walkWord(this.rows, this.x1, this.y1, this.x2, this.y2, "hello", SELECT);
-        console.log("selection: " + this.selection);
+        this.selection = walkWord(this.rows, this.x1, this.y1,
+          this.x2, this.y2, "", SELECT);
         if (isValidWord(this.selection, this.valid_words)) {
-          walkWord(this.rows, this.x1, this.y1, this.x2, this.y2, "hello", HIGHLIGHT);
+          walkWord(this.rows, this.x1, this.y1, this.x2, this.y2,
+            "", HIGHLIGHT);
           deleteWordFromList(this.selection, this.valid_words);
-          this.letter_key += 1;
         }
       }
       else if (this.click_state == 1) {
