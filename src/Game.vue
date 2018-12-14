@@ -4,7 +4,7 @@
     <div id = "game-board">
       <h1>Crossword Puzzle</h1>  
       <ul v-if="!is_paused" v-for="(row, row_index) in rows">
-        <li v-on:click="handleClick(row_index, col_index)" 
+        <li v-on:click="handleClick(row_index, col_index)"
           v-for="(letter, col_index) in row">
           <letter v-bind:char=letter.letter v-bind:found=letter.is_found v-bind:is_selected=rows[row_index][col_index].is_selected v-bind:is_clicked="checkClick(row_index, col_index)"></letter>
         </li>
@@ -93,13 +93,13 @@ export default {
       if (this.click_state == - 1) {
         this.x1 = row;
         this.y1 = col;
-        this.rows[row][col].is_selected = 1;
+        //this.rows[row][col].is_selected = 1;
         this.click_state = 0;
       }
       else if (this.click_state == 0) {
         this.x2 = row;
         this.y2 = col;
-        this.rows[row][col].is_selected = 0;
+        //this.rows[row][col].is_selected = 0;
         this.click_state = 1;
         this.selection = walkWord(this.rows, this.x1, this.y1,
           this.x2, this.y2, "", SELECT);
@@ -112,8 +112,8 @@ export default {
       }
       else if (this.click_state == 1) {
         //flushHighlight(this.rows);
-        walkWord(this.rows, this.x1, this.y1, row, col, "", CLEAR_HIGHLIGHT);
-        this.rows[this.x1][this.y1].is_selected = 0;
+        //walkWord(this.rows, this.x1, this.y1, row, col, "", CLEAR_HIGHLIGHT);
+        //this.rows[this.x1][this.y1].is_selected = 0;
         this.x1 = row;
         this.y1 = col;
         //this.rows[row][col].is_selected = 1;
@@ -137,6 +137,8 @@ export default {
       }
     },
     checkClick(row, col) {
+      if (this.click_state == 1)
+        return (false);
       if (row == this.x1 && col == this.y1)
         return (true);
       return (false);
