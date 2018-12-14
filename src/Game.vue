@@ -4,19 +4,29 @@
     <div id = "game-board">
       <h1>Crossword Puzzle</h1>  
       <ul v-if="!is_paused" v-for="(row, row_index) in rows">
-        <li v-on:click="handleClick(row_index, col_index)"
-          v-for="(letter, col_index) in row">
-          <letter v-bind:char=letter.letter v-bind:found=letter.is_found v-bind:is_selected=rows[row_index][col_index].is_selected v-bind:is_clicked="checkClick(row_index, col_index)"></letter>
+        <li 
+          v-for="(letter, col_index) in row"
+          v-on:click="handleClick(row_index, col_index)" 
+          v-on:mouseover="highlightSelection(row_index, col_index)"
+        >  
+          <letter
+            v-bind:char=letter.letter v-bind:found=letter.is_found 
+            v-bind:is_selected=rows[row_index][col_index].is_selected 
+            v-bind:is_clicked="checkClick(row_index, col_index)">
+          </letter>
         </li>
       </ul>      
     </div>
     <div id="words">
       <h1 id="list-header">Word List</h1>
       <word-list  v-bind:word_list="valid_words"/>
+      <div v-if="game_over">
+        <button @click="restartGame()" id="restart"> Restart Game</button>
+    </div>
     </div>
     <div v-if="is_paused" v-bind:selection=selection id="message">
       <p>You have clicked the word '{{selection}}'</p><br/>
-      <button @click="resumeGame">Resume Game</button>
+      <button @click="resumeGame()">Resume Game</button>
     </div>
   </div>
 </template>
@@ -33,6 +43,9 @@ let actionHook = (selection) => {
   console.log(selection);
 }
 
+/*
+** check if coordinates are valid before calling walkWord()
+*/
 
 let invalidCoords = (x1, y1, x2, y2) => {
   if (x2 > 16 || y2 > 16 || x2 < 0 || y2 < 0)
@@ -47,22 +60,35 @@ let invalidCoords = (x1, y1, x2, y2) => {
 }
 
 
+/*
+** clear the current mouseover hover event selection
+*/
+
 let clearPrevHighlight = (rows, x1, y1, x2, y2) => {
   if (!invalidCoords(x1, y1, x2, y2))
     walkWord(rows, x1, y1, x2, y2, "", CLEAR_HIGHLIGHT);
 }
+
+/* 
+** set a new mouseover hover event selection
+*/
 
 let setNewHighlight = (rows, x1, y1, x2, y2) => {
   if (!invalidCoords(x1, y1, x2, y2))
     walkWord(rows, x1, y1, x2, y2, "", SET_HIGHLIGHT);
 }
 
-let flushHighlight = (rows) => {
-  for (let i = 0; i < 17; i++) {
-    for (let j = 0; j < 17; j++) {
-      rows[i][j].is_selected = 0;
-    }
+/*
+** check if the player has found all words on the map
+*/
+
+let allWordsAreFound = (valid_words) => {
+  let ret = true;
+  for (let i = 0; i < valid_words.length; i++) {
+    if (valid_words[i].found_state == 0)
+      ret = false;
   }
+  return (ret);
 }
 
 export default {
@@ -78,6 +104,7 @@ export default {
       click_state: -1,
       selection: "",
       is_paused: 0,
+      game_over: 0,
     }
   },
   methods: {
@@ -93,13 +120,11 @@ export default {
       if (this.click_state == - 1) {
         this.x1 = row;
         this.y1 = col;
-        //this.rows[row][col].is_selected = 1;
         this.click_state = 0;
       }
       else if (this.click_state == 0) {
         this.x2 = row;
         this.y2 = col;
-        //this.rows[row][col].is_selected = 0;
         this.click_state = 1;
         this.selection = walkWord(this.rows, this.x1, this.y1,
           this.x2, this.y2, "", SELECT);
@@ -107,33 +132,31 @@ export default {
           walkWord(this.rows, this.x1, this.y1, this.x2, this.y2,
             "", HIGHLIGHT);
           deleteWordFromList(this.selection, this.valid_words);
+          if (allWordsAreFound(this.valid_words)) {
+            this.game_over = 1;
+          }
           this.is_paused = 1;
         }
       }
       else if (this.click_state == 1) {
-        //flushHighlight(this.rows);
-        //walkWord(this.rows, this.x1, this.y1, row, col, "", CLEAR_HIGHLIGHT);
-        //this.rows[this.x1][this.y1].is_selected = 0;
         this.x1 = row;
         this.y1 = col;
-        //this.rows[row][col].is_selected = 1;
         this.x2 = -1;
         this.y2 = -1;
         this.click_state = 0;
-        
-        
       }
-      console.log(this.click_state);
     },
     resumeGame: function() {
       this.is_paused = 0;
     },
+    
     highlightSelection: function(row, col) {
       if (this.click_state == 0 || this.click_state == 1) {
         clearPrevHighlight(this.rows, this.x1, this.y1, this.x_hover, this.y_hover);
         this.x_hover = row;
         this.y_hover = col;
-        setNewHighlight(this.rows, this.x1, this.y1, this.x_hover, this.y_hover);
+        if (this.click_state == 0)
+          setNewHighlight(this.rows, this.x1, this.y1, this.x_hover, this.y_hover);
       }
     },
     checkClick(row, col) {
@@ -148,7 +171,7 @@ export default {
     Letter,
     WordList,
   },
-  props: ['valid_words', 'rows'],
+  props: ['valid_words', 'rows', 'restartGame'],
 }
 </script>
 
@@ -201,5 +224,12 @@ a {
   float: left;
   padding-left: 220px;
   padding-top: 30px;
+}
+#restart {
+  cursor: pointer;
+  background-color: brown;
+  font-size: 22px;
+  padding: 20px;
+  margin-left: 0px;
 }
 </style>

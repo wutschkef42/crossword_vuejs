@@ -1,6 +1,11 @@
 
 <template>
-  <game v-if=game_is_running v-bind:valid_words="valid_words" v-bind:rows="rows" />
+  <game 
+    v-if=game_is_running 
+    v-bind:valid_words="valid_words" 
+    v-bind:rows="rows" 
+    v-bind={restartGame}
+  />
   <button v-else @click="startGame" id="start-button">Start Game</button>
 </template>
 
@@ -119,6 +124,7 @@ export default {
       input_str: input_str,
       rows: [],
       game_is_running: 0,
+      words: words,
     }
   },
   created: function () {
@@ -131,6 +137,12 @@ export default {
     startGame: function() {
       this.game_is_running = 1;
     },
+    restartGame: function() {
+      this.game_is_running = 0;
+      this.input_str = randomString();
+      this.valid_words = initWordList(this.words);
+      this.rows = initGame(this.input_str, this.valid_words);
+    }
   }
 }
 </script>
