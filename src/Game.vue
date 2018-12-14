@@ -39,8 +39,21 @@ import { walkWord } from './walkBoard.js';
 import { isValidWord, deleteWordFromList } from './manageWordList.js';
 import { SELECT, HIGHLIGHT, CHECK, SET, CLEAR_HIGHLIGHT, SET_HIGHLIGHT } from './constants.js';
 
-let actionHook = (selection) => {
-  console.log(selection);
+
+/*
+** before printing to screen, reverse selected word if necessary
+*/
+
+let checkSpelling = (word, valid_words) => {
+  const rev_word = word.split("").reverse().join("");
+  for (let i = 0; i < valid_words.length; i++) {
+    if (word == valid_words[i].str) {
+      return (word);
+      
+    } else if (rev_word == valid_words[i].str) {
+      return (rev_word)
+    }
+  }
 }
 
 /*
@@ -128,7 +141,9 @@ export default {
         this.click_state = 1;
         this.selection = walkWord(this.rows, this.x1, this.y1,
           this.x2, this.y2, "", SELECT);
+        
         if (isValidWord(this.selection, this.valid_words)) {
+          this.selection = checkSpelling(this.selection, this.valid_words);
           walkWord(this.rows, this.x1, this.y1, this.x2, this.y2,
             "", HIGHLIGHT);
           deleteWordFromList(this.selection, this.valid_words);
